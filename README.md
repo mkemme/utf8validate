@@ -13,10 +13,10 @@ java -jar Utf8Validate.jar < "somefile.txt" > /dev/null
 ```
 
 Exit codes:
-0: UTF-8
-1: UTF-8 with BOM
-2: Plain ASCII
-10: Not valid UTF-8
+* 0: UTF-8
+* 1: UTF-8 with BOM
+* 2: Plain ASCII
+* 10: Not valid UTF-8
 
 You can find ready-made example script in scripts/ directory.
 
