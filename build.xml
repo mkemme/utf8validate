@@ -1,0 +1,97 @@
+<project name="UTF-8 validation tool." default="jar" basedir=".">
+    <description>
+     UTF-8 validation tool build file. To build all components just type 'ant' in this directory.	   
+	   This build file requires JUNIT, available at: http://www.junit.org/ 
+     During build process it will look for $JUNIT_HOME/junit.jar 
+	 </description>
+  	
+	<!-- set global properties for this build -->
+	<property name="source.dir" location="${basedir}/src"/>
+	<property name="test.dir" location="${basedir}/tst"/>
+	<property name="build.dir" location="bin"/>
+  <property name="reports.dir" location="bin/reports"/>
+
+	<property name="junit.xml.report.dir" location="${reports.dir}/junit_xml"/>
+	<property name="junit.html.report.dir" location="${reports.dir}/junit_html"/>
+	
+	<property environment="env"/>
+	
+	<target name="init" description="Initialize. Set timestamps and creates neccessary directories">
+		<tstamp>
+			<format property="build_date" pattern="yyyy.MM.dd kk:mm" locale="en"/>
+		</tstamp>
+		<mkdir dir="${build.dir}"/> 		<!-- create dir to store class and jar files -->
+		<mkdir dir="${reports.dir}"/> 
+	</target>
+		
+	<target name="compile" depends="init" description="Compile all source including tests. Put compiled files in build.dir" >
+		<echo message="Using JUNIT_HOME environment variable ${env.JUNIT_HOME}"/>
+		<javac srcdir="${source.dir};${test.dir}" destdir="${build.dir}" encoding="UTF-8">
+			<classpath>
+				<pathelement location="${env.JUNIT_HOME}/junit.jar"/>
+			</classpath>
+		</javac>		
+	</target>
+ 
+	<target name="compile-debug" depends="init" description="Compile all source including tests in debug mode." >
+		<echo message="Using JUNIT_HOME environment variable ${env.JUNIT_HOME}"/>
+		<javac srcdir="${source.dir};${test.dir}" destdir="${build.dir}" encoding="UTF-8" debug="yes">
+		</javac>		
+	</target>
+  
+	<target name="jar" depends="compile" description="Build executable JAR file. Delete redundant class files.">
+		<manifest file="MANIFEST.MF">
+			<attribute name="Main-Class" value="org.mke.utf8validate.Utf8Validate"/>
+			<attribute name="Build-Date" value="${build_date}" />
+		</manifest>
+				
+		<jar destfile="${build.dir}/Utf8Validate.jar" basedir="${build.dir}" 
+			includes="**/*.class"
+			excludes="**/*Test.class"
+			compress="false" 
+			manifest="MANIFEST.MF"/>
+		
+		<!-- Delete redundant class files, that are included in JAR file already -->
+		<delete>
+			<fileset dir="${build.dir}" includes="**/*.class"/>
+		</delete>
+		<delete file="MANIFEST.MF"/>
+		<delete dir="${build.dir}/org"/>
+		<delete file="${buildrevision.outputfile}"/>
+		
+		<echo message=" "/>
+		<echo message="==============================================="/>
+		<echo message="Please use the Utf8Validate.jar file for execution."/>
+		<echo message="JAR file is located in the bin/ subdirectory."/>
+		<echo message="==============================================="/>
+	</target>
+
+	<target name="clean" description="Delete all temporary directories and binaries."> 
+        <delete dir="${build.dir}"/>
+		<delete dir="${reports.dir}"/>
+	</target>
+	
+	<target name="test" depends="compile" description="Run all tests">
+		<mkdir dir="${junit.xml.report.dir}"/>
+		<mkdir dir="${junit.html.report.dir}"/>
+		
+		<junit fork="yes" haltonfailure="yes" printsummary="yes" showoutput="yes" failureProperty="test.failed">
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${junit.xml.report.dir}" >
+				<fileset dir="${build.dir}">
+					<include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+			<classpath>
+				<pathelement location="${env.JUNIT_HOME}/junit-4.4.jar"/>
+				<pathelement location="${env.JUNIT_HOME}/junit-4.5.jar"/>
+				<pathelement location="${build.dir}"/>
+			</classpath>
+		</junit>
+		
+	</target>
+	
+	<target name="all" description="Builds, tests and creates JAR file" 
+		depends="clean, compile, test, jar"/>
+		
+</project>
