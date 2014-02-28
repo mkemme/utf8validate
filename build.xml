@@ -84,8 +84,7 @@
 				</fileset>
 			</batchtest>
 			<classpath>
-				<pathelement location="${env.JUNIT_HOME}/junit-4.4.jar"/>
-				<pathelement location="${env.JUNIT_HOME}/junit-4.5.jar"/>
+				<pathelement location="${env.JUNIT_HOME}/junit.jar"/>
 				<pathelement location="${build.dir}"/>
 			</classpath>
 		</junit>
