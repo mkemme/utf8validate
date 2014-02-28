@@ -63,6 +63,7 @@
 		<echo message="==============================================="/>
 		<echo message="Please use the Utf8Validate.jar file for execution."/>
 		<echo message="JAR file is located in the bin/ subdirectory."/>
+    <echo message="You can find usage example in scripts/ directory."/>
 		<echo message="==============================================="/>
 	</target>
 
